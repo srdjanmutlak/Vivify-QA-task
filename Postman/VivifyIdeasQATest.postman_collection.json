@@ -390,17 +390,17 @@
 			"response": []
 		},
 		{
-			"name": "Edit gallery with no existing image",
+			"name": "Edit gallery with image that does not exist",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// Ovaj test case bi trebao da padne",
-							"// jer dopusta kreiranje galerije sa slikom koja",
-							"// ne postoji - ocekivano je da izbaci gresku da",
-							"// slika ne postoji",
-							"// npr. https://google.com/slika.jpg",
+							"// This test case should fail",
+							"// because it allows creation of the gallery",
+							"// and the pic does not exist.",
+							"// App should show us a message that the image does not exist",
+							"// npr. https://graplehook.com/graplepic.jpg",
 							"",
 							"",
 							"pm.test(\"Status code is 422\", function () {",
