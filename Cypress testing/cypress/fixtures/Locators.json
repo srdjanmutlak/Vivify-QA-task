@@ -1,0 +1,35 @@
+{
+    "Header":{
+        "Login":"a[href='/login']",
+        "Register": "a[href='/register']",
+        "LogoutButton" : "a[role='button ']"
+    },
+    "LoginPage":{
+        "Email": "input[id='email']",
+        "Password": "input[id='password']",
+        "SubmitButton": "button[type='submit']"
+    
+    },
+
+    "RegisterPage":{
+        "FirstName": "input[id='first-name']",
+        "LastName":"input[id='last-name']",
+        "Email": "input[id='email']",
+        "Password":"input[id='password']",
+        "PasswordConfirmation":"input[id='password-confirmation']",
+        "Checkbox": "input[type='checkbox']",
+        "SubmitButton":"button[type='submit']"
+    },
+
+    "CreateGalleryPage":{
+        "TitleInput": "input[id='title']",
+        "DescriptionInput": "input[id='description']",
+        "ImageInput": "input[type='url']",
+        "SubmitButton": "button[type='submit'].eq(0)",
+        "CancelButton": "button[type='submit'].eq(1)",
+        "ButtonUp": "button[class='input-buttons'].eq(0)",
+        "ButtonDown": "button[class='input-buttons'].eq(1)",
+        "AddButton": "button[type='button'].eq(2)"
+
+    }
+}

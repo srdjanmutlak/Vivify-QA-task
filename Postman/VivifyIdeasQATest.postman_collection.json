@@ -1,0 +1,523 @@
+{
+	"info": {
+		"_postman_id": "a4cd039c-4cea-44cb-8c13-1ec6d9be05d3",
+		"name": "VivifyIdeasQATest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Access token exist in response\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"access_token\");",
+							"    pm.environment.set(\"token\", jsonData.access_token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"srdjan.mutlak@gmail.com\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Gallery",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const firstName = pm.variables.replaceIn('{{$randomFirstName}}')",
+							"pm.environment.set(\"GalleryTitle\", firstName)",
+							"",
+							"const lastName = pm.variables.replaceIn('{{$randomLastName}}')",
+							"pm.environment.set(\"GalleryDescription\", lastName)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test('Create Gallery', function () {",
+							"    const galleryTitle = pm.variables.get('GalleryTitle');",
+							"    pm.expect(jsonData.title).to.eql(galleryTitle);",
+							"    const galleryDescription = pm.variables.get('GalleryDescription');",
+							"    pm.expect(jsonData.description).to.eql(galleryDescription);",
+							"    pm.environment.set('GalleryID',jsonData.id)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{GalleryTitle}}\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"{{GalleryUrl}}\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery without title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors.title[0]).to.eql(\"The title field is required.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"{{GalleryUrl}}\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery without url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors['images.0'][0]).to.eql(\"The images.0 format is invalid.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{GalleryTitle}}\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery without valid image extension",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors['images.0'][0]).to.eql(\"The images.0 format is invalid.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{GalleryTitle}}\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"https://krstarica.name/wp-content/uploads/2021/05/pas-1-750x430.com\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery with invalid url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors['images.0'][0]).to.eql(\"The images.0 format is invalid.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{GalleryTitle}}\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"invalidlink.jpg\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery without title and url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors.title[0]).to.eql(\"The title field is required.\");",
+							"    pm.expect(jsonData.errors['images.0'][0]).to.eql(\"The images.0 format is invalid.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit gallery with no existing image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Ovaj test case bi trebao da padne",
+							"// jer dopusta kreiranje galerije sa slikom koja",
+							"// ne postoji - ocekivano je da izbaci gresku da",
+							"// slika ne postoji",
+							"// npr. https://google.com/slika.jpg",
+							"",
+							"",
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Error messages is returned\", function () {",
+							"    pm.expect(jsonData.errors['images.0'][0]).to.eql(\"The image does not exist.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{GalleryTitle}}\",\n    \"description\": \"{{GalleryDescription}}\",\n    \"images\": [\n        \"https://google.com.jpg\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/galleries/{{GalleryID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"galleries",
+						"{{GalleryID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Successfully logged out\", function () {",
+							"    pm.expect(jsonData.message).to.eql(\"Successfully logged out\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/auth/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

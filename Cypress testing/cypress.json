@@ -1,0 +1,7 @@
+{
+    "baseUrl":"https://gallery-app.vivifyideas.com",
+    "env": {
+        "validEmailAddress": "srdjan.mutlak@gmail.com",
+        "validPassword":"12345678"
+    }
+}
