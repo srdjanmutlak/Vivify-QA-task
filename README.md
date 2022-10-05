@@ -1,6 +1,8 @@
+*****************
 CODE REVIEW for part 2 Automation task (done by Cypress ambassadors) available at https://youtu.be/S4kRyYgcq-A?t=2150
+*****************
 
-Vivify Ideas QA Test
+QA TEST
 
 Directions:
 24 hours to complete this task.
